@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "999301436896",
+    "firebase_url": "https://simple-learn-9d9fc.firebaseio.com",
+    "project_id": "simple-learn-9d9fc",
+    "storage_bucket": "simple-learn-9d9fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999301436896:android:7aac92fd58461eccda0785",
+        "android_client_info": {
+          "package_name": "edu.learn.simple"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "999301436896-5onck807nq5a7oca9eogft0qfjbe8915.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUDbcZZtqoBupd9iqUAHrMCtkTZr5qdNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "999301436896-5onck807nq5a7oca9eogft0qfjbe8915.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
