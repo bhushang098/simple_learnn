@@ -15,6 +15,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: widget._vidList.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
@@ -25,6 +26,7 @@ class _VideoWidgetState extends State<VideoWidget> {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Card(
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),

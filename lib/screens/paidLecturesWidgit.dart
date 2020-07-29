@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ class PaidLecturesWidgit extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
     return ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: _vidList.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
@@ -21,6 +23,7 @@ class PaidLecturesWidgit extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Card(
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -40,8 +43,25 @@ class PaidLecturesWidgit extends StatelessWidget {
                           },
                         );
                       } else {
-                        //TODO : Go to purchase page by passing course name
-                        navToPurchase(context, _vidList[index]);
+                        bool istechher = false;
+                        isTeacher(user).then((value) async {
+                          istechher = value;
+                          if (istechher) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  // Retrieve the text the that user has entered by using the
+                                  // TextEditingController.
+                                  content: Text(
+                                      'This Mail Is Assigned With Teacher Account \n please create new Account For Students Side Access'),
+                                );
+                              },
+                            );
+                          } else {
+                            navToPurchase(context, _vidList[index]);
+                          }
+                        });
                       }
                       print("Tapped>>>>" + _vidList[index].title.toString());
                     },
@@ -69,5 +89,15 @@ class PaidLecturesWidgit extends StatelessWidget {
 
   void navToPurchase(BuildContext context, paidVidClass vod) {
     Navigator.pushNamed(context, '/PurchasePage', arguments: vod);
+  }
+
+  Future<bool> isTeacher(FirebaseUser user) async {
+    DocumentSnapshot reference =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    if (reference.exists) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

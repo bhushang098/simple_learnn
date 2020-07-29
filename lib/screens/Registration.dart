@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple/services/authentication.dart';
 import 'package:simple/services/dbCollectinService.dart';
+import 'package:simple/services/parser.dart';
 
 class Registration extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class _RegistrationState extends State<Registration> {
   final cmail = TextEditingController();
   final cphoneNo = TextEditingController();
 
+  bool _isLoading = false;
   final _auth = new Auth();
 
   void navigateToHome() {
@@ -67,14 +69,21 @@ class _RegistrationState extends State<Registration> {
                   SizedBox(
                     height: 20,
                   ),
+                  _isLoading ? CircularProgressIndicator() : Text(''),
                   RaisedButton(
                     color: Colors.teal,
                     onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
                       String mail, pass, phone;
                       pass = cpassward.text;
                       mail = cmail.text;
                       phone = cphoneNo.text;
                       if (mail.isEmpty || pass.isEmpty || phone.isEmpty) {
+                        setState(() {
+                          _isLoading = false;
+                        });
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -86,24 +95,16 @@ class _RegistrationState extends State<Registration> {
                           },
                         );
                       } else {
-                        dynamic user = await _auth.signUp(mail, pass);
+                        dynamic user = await _auth.signUp(mail, pass, context);
                         if (user != null) {
+                          setState(() {
+                            _isLoading = false;
+                          });
                           new DbUserCollection(user)
                               .pushUserdata(mail, phone, '0');
                           navigateToHome();
                           print('>>>>>>>>>>>>>>>>>>' + user);
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                // Retrieve the text the that user has entered by using the
-                                // TextEditingController.
-                                content: Text('failed Registration'),
-                              );
-                            },
-                          );
-                        }
+                        } else {}
                       }
                     },
                     child: const Text(

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:simple/services/firestoreService.dart';
@@ -18,6 +18,7 @@ class _PurchasePageState extends State<PurchasePage> {
   Razorpay _razorpay;
   FirebaseUser user;
   String mobNo, email;
+  // var courseList;
 
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _PurchasePageState extends State<PurchasePage> {
 
   void openCheckout() async {
     var options = {
-      'key': 'rzp_test_H7IWycVqn3EvN1',
+      'key': 'rzp_live_SFkrMpkKL4FzIe',
       'amount': num.parse(vid.price) * 100,
       'name': vid.author,
       'description': 'Course name : ' + vid.course.toString().split('>>').first,
@@ -73,16 +74,21 @@ class _PurchasePageState extends State<PurchasePage> {
       appBar: AppBar(
         title: Text('Make Purchase'),
       ),
-      body: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 60,
-          ),
-          Card(
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 60,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 8,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
                   child: Text(
                     'Course Name : ' +
                         vid.course.split('>>').first +
@@ -98,49 +104,76 @@ class _PurchasePageState extends State<PurchasePage> {
                       fontSize: 16,
                       color: Colors.teal[700],
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          RaisedButton(
-            child: Text(
-              'Purchase This Course',
-              style: TextStyle(
-                color: Colors.white,
               ),
             ),
-            color: Colors.teal,
-            onPressed: () {
-              //ToDO : open razor pay
-              openCheckout();
-            },
-          ),
-        ],
+            SizedBox(
+              height: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  'Note :- when ${vid.author} uploads new Videos In Course ${vid.course.split('>>').first} it will be updated in your Purchased course for free and u have Access to this course provided  you have your email and Password to access your Account \n '),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            RaisedButton(
+              child: Text(
+                'Purchase This Course',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              color: Colors.teal,
+              onPressed: () {
+                //ToDO : open razor pay
+                openCheckout();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    Fluttertoast.showToast(
-        msg: "SUCCESS: " + response.paymentId, timeInSecForIosWeb: 4);
-    // Updater user Infop to firestore:
+//
     addNewCourseEntry(vid.course);
+
+    updateTeachersCourseSoldInfoandbalance(vid.course);
+
+    showAlertDialog(context);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Fluttertoast.showToast(
-        msg: "ERROR: " + response.code.toString() + " - " + response.message,
-        timeInSecForIosWeb: 4);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          // Retrieve the text the that user has entered by using the
+          // TextEditingController.
+          content: Text('Opps !!! \n Payment Failed'),
+        );
+      },
+    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    Fluttertoast.showToast(
-        msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIosWeb: 4);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          // Retrieve the text the that user has entered by using the
+          // TextEditingController.
+          content: Text(
+            'Sorry !!! \n We Dont Support ' + response.walletName,
+            style: TextStyle(color: Colors.red),
+          ),
+        );
+      },
+    );
   }
 
   Future addNewCourseEntry(String courseName) async {
@@ -160,5 +193,59 @@ class _PurchasePageState extends State<PurchasePage> {
         await Firestore.instance.collection('users').document(user.uid).get();
     mobNo = studentSnapshot['mobile_no'];
     email = studentSnapshot['email'];
+    //courseList = studentSnapshot['courses_purchases'];
+  }
+
+  void navTouHome() {
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/StudMain', (Route<dynamic> route) => false);
+  }
+
+  showAlertDialog(BuildContext context) {
+    // Create button
+    Widget okButton = FlatButton(
+      child: Text("Return Home"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        navTouHome();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Congratulations !!!"),
+      content: Text(
+          "you Purchased This Course \n see this course in Your Purchases option"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void updateTeachersCourseSoldInfoandbalance(String courseName) async {
+    CollectionReference TeachersCollection =
+        Firestore.instance.collection('teachers');
+
+    DocumentSnapshot teacherSnapShot = await Firestore.instance
+        .collection('teachers')
+        .document(courseName.split('>>').last)
+        .get();
+    var coursesSoldTill = teacherSnapShot['courses_sold'];
+    double oldbalance = num.parse(teacherSnapShot['balance']);
+    double newBalance = (oldbalance + ((78 / 100) * num.parse(vid.price)));
+    print('>>>:::??????????::::::${newBalance}');
+    return await TeachersCollection.document(courseName.split('>>').last)
+        .updateData({
+      'courses_sold': coursesSoldTill.toString() + '??.??' + courseName,
+      'balance': newBalance.toStringAsFixed(2),
+    });
   }
 }

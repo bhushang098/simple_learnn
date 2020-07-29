@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:simple/services/authentication.dart';
 import 'package:simple/services/dbCollectinService.dart';
 
-
 class LoginSignUp extends StatefulWidget {
   @override
   _LoginSignUpState createState() => _LoginSignUpState();
@@ -14,6 +13,7 @@ class _LoginSignUpState extends State<LoginSignUp> {
   final email = TextEditingController();
   final password = TextEditingController();
   final mobileNo = TextEditingController();
+  bool _isLoading = false;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -71,13 +71,19 @@ class _LoginSignUpState extends State<LoginSignUp> {
                 SizedBox(
                   height: 30,
                 ),
+                _isLoading ? CircularProgressIndicator() : Text(''),
                 RaisedButton(
                   color: Colors.teal,
                   onPressed: () async {
-                    //TODo: perform Logon action
+                    setState(() {
+                      _isLoading = true;
+                    });
                     String mail = email.text;
                     String pass = password.text;
                     if (mail.isEmpty || pass.isEmpty) {
+                      setState(() {
+                        _isLoading = false;
+                      });
                       return showDialog(
                         context: context,
                         builder: (context) {
@@ -89,8 +95,11 @@ class _LoginSignUpState extends State<LoginSignUp> {
                         },
                       );
                     } else {
-                      dynamic userid = await _auth.signIn(mail, pass);
+                      dynamic userid = await _auth.signIn(mail, pass, context);
                       if (userid == null) {
+                        setState(() {
+                          _isLoading = false;
+                        });
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -102,6 +111,9 @@ class _LoginSignUpState extends State<LoginSignUp> {
                           },
                         );
                       } else {
+                        setState(() {
+                          _isLoading = true;
+                        });
                         navigateToStudMain();
                         print('>>>>>>>>>>>>>>>>>>' + userid.toString());
                       }
@@ -111,6 +123,18 @@ class _LoginSignUpState extends State<LoginSignUp> {
                     'Log In',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+                  child: Text(
+                    'Forgot Password ?',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    navtoPassReset();
+                  },
                 ),
                 SizedBox(
                   height: 30,
@@ -181,14 +205,13 @@ class _LoginSignUpState extends State<LoginSignUp> {
                     SizedBox(
                       height: 10,
                     ),
-                    RaisedButton(
-                      color: Colors.teal,
-                      onPressed: () {
+                    GestureDetector(
+                      onTap: () {
                         openRegisterPage();
                       },
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      child: Text(
+                        ' Dont Have Account ? Register',
+                        style: TextStyle(fontSize: 16, color: Colors.blue),
                       ),
                     ),
                   ],
@@ -199,5 +222,9 @@ class _LoginSignUpState extends State<LoginSignUp> {
         ),
       ),
     );
+  }
+
+  void navtoPassReset() {
+    Navigator.pushNamed(context, '/PassReset');
   }
 }

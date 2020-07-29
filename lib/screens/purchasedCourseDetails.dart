@@ -36,51 +36,6 @@ class _PurchasedCourseDetailsState extends State<PurchasedCourseDetails> {
       appBar: AppBar(
         title: Text('Simple Learn'),
       ),
-//      body: ListView.builder(
-//          itemCount: _vidList.length,
-//          itemBuilder: (BuildContext context, int index) {
-//            return Column(
-//              children: <Widget>[
-//                SizedBox(
-//                  height: 3,
-//                ),
-//                Padding(
-//                  padding: const EdgeInsets.all(5.0),
-//                  child: Card(
-//                    shape: RoundedRectangleBorder(
-//                      borderRadius: BorderRadius.circular(8.0),
-//                    ),
-//                    child: InkWell(
-//                      splashColor: Colors.teal[100],
-//                      onTap: () {
-//                        print('Got url >>>>' + _vidList[index].url.toString());
-//                        navToNewVidScreen(_vidList[index]);
-//                      },
-//                      child: ListTile(
-//                        leading: Icon(
-//                          Icons.video_library,
-//                          size: 50,
-//                          color: Colors.green,
-//                        ),
-//                        title: Text(
-//                          _vidList[index].title,
-//                          style: TextStyle(
-//                            fontSize: 18,
-//                          ),
-//                        ),
-//                        //subtitle: Text(finalList[index].split('>>').last),
-//                        subtitle: Text(_vidList[index].author),
-//                      ),
-//                    ),
-//                  ),
-//                ),
-//                SizedBox(
-//                  height: 3,
-//                ),
-//              ],
-//            );
-//          }),
-
       body: FutureBuilder(
         future: getpurchasedCourse(courseName),
         builder: (_, snapShot) {
@@ -91,6 +46,7 @@ class _PurchasedCourseDetailsState extends State<PurchasedCourseDetails> {
             );
           } else {
             return ListView.builder(
+                physics: BouncingScrollPhysics(),
                 itemCount: snapShot.data.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
@@ -101,6 +57,7 @@ class _PurchasedCourseDetailsState extends State<PurchasedCourseDetails> {
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Card(
+                          elevation: 4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),

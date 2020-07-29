@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +25,6 @@ class VidScreen extends StatelessWidget {
             ),
             tooltip: 'Buy This Course',
             onPressed: () {
-              //TODO : implimenet purchase functionality and getrive more data using
-
               // <String ,string> {url:'url',name :'Name of Couse' etc.....}
               if (user.isAnonymous) {
                 showDialog(
@@ -40,7 +39,25 @@ class VidScreen extends StatelessWidget {
                   },
                 );
               } else {
-                navToPurchasePage(context, vid);
+                bool istechher = false;
+                isTeacher(user).then((value) async {
+                  istechher = value;
+                  if (istechher) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          // Retrieve the text the that user has entered by using the
+                          // TextEditingController.
+                          content: Text(
+                              'This Mail Is Assigned With Teacher Account \n please create new Account For Students Side Access'),
+                        );
+                      },
+                    );
+                  } else {
+                    navToPurchasePage(context, vid);
+                  }
+                });
               }
             },
           ),
@@ -51,5 +68,15 @@ class VidScreen extends StatelessWidget {
 
   void navToPurchasePage(BuildContext context, VideoClass vid) {
     Navigator.pushNamed(context, '/PurchasePage', arguments: vid);
+  }
+
+  Future<bool> isTeacher(FirebaseUser user) async {
+    DocumentSnapshot reference =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    if (reference.exists) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

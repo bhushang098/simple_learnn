@@ -61,24 +61,6 @@ class _SplashState extends State<Splash> {
               color: Colors.teal[200],
             ),
           ),
-          Card(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: ListTile(
-                  leading: Icon(
-                    Icons.mail,
-                    color: Colors.teal,
-                  ),
-                  title: Text(
-                    'athaware972@gmail.com',
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.teal[800],
-                        fontFamily: 'SourceSansPro'),
-                  ),
-                )),
-          )
         ],
       )),
     );

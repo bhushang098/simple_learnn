@@ -25,7 +25,6 @@ class _UserPurchasesState extends State<UserPurchases> {
     FirebaseUser user = Provider.of<FirebaseUser>(context);
     courseList =
         ModalRoute.of(context).settings.arguments.toString().split('??.??');
-
     finalList = courseList.sublist(1, courseList.length);
 
     return Scaffold(

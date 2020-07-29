@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple/screens/NewVidScreen.dart';
 import 'package:simple/screens/Registration.dart';
+import 'package:simple/screens/aboutUs.dart';
+import 'package:simple/screens/contactus.dart';
+import 'package:simple/screens/downloadedVideoScreen.dart';
 import 'package:simple/screens/downloads.dart';
 import 'package:simple/screens/login_signup.dart';
+import 'package:simple/screens/passReset.dart';
 import 'package:simple/screens/purchasePage.dart';
 import 'package:simple/screens/purchasedCourseDetails.dart';
 import 'package:simple/screens/splash.dart';
@@ -44,6 +48,11 @@ class MyApp extends StatelessWidget {
           '/PurchasedCourseDetails': (BuildContext context) =>
               new PurchasedCourseDetails(),
           '/NewVidScreen': (BuildContext context) => new NewVidScreen(),
+          '/AboutUs': (BuildContext context) => new AboutUs(),
+          '/DownloadedVidScreen': (BuildContext context) =>
+              new DownloadvidScreen(),
+          '/ContactUs': (BuildContext context) => new ContactUs(),
+          '/PassReset': (BuildContext context) => new PassReset(),
         },
         home: Splash(),
       ),

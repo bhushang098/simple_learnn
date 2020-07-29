@@ -59,6 +59,7 @@ class DeligateLectures extends SearchDelegate<VideoClass> {
     }
 
     return ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: anslist.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
@@ -69,6 +70,7 @@ class DeligateLectures extends SearchDelegate<VideoClass> {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Card(
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -151,6 +153,7 @@ class DeligatePaidLectures extends SearchDelegate<paidVidClass> {
       }
     }
     return ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: anslist.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
@@ -158,15 +161,10 @@ class DeligatePaidLectures extends SearchDelegate<paidVidClass> {
               SizedBox(
                 height: 3,
               ),
-//              ListTile(
-//                leading: Icon(Icons.video_library, size: 50),
-//                title: Text(_vidList[index].url.toString()),
-//                subtitle: Text(_vidList[index].title.toString()),
-//              ),
-
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Card(
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
